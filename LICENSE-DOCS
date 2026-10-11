@@ -1,9 +1,0 @@
-The data (data/), the results (results/) and the documentation of this deposit are licensed under the Creative
-Commons Attribution-ShareAlike 4.0 International License (CC BY-SA 4.0). The "ref" fields in data/ are FLORES-200
-reference sentences, which are themselves licensed under CC BY-SA 4.0. The model outputs were produced with
-Qwen3.5-9B and Gemma 4 E4B (both Apache-2.0). The code in code/ and reproduce.sh is additionally available under
-the MIT License (LICENSE); users of those files may choose either licence.
-
-Copyright (c) 2026 Hanyu Yang
-
-Full licence text: https://creativecommons.org/licenses/by-sa/4.0/legalcode

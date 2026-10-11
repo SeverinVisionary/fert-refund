@@ -1,7 +1,7 @@
 {
  "title": "No fertility refund: speculative-decoding acceptance across 21 languages (data and code)",
  "upload_type": "dataset",
- "description": "<p>Per-item speculative-decoding acceptance for two built-in self-drafters, Qwen3.5-9B with its MTP head and Gemma 4 E4B with its assistant, on 200 FLORES-200 devtest sentences in each of 21 languages, with the code that measures it exactly for greedy lossless speculation (K = 1..5).</p><p><b>Result: no fertility refund.</b> Under decision rules fixed before the runs, every gate passed and both kill rules fired in both families. Acceptance falls with fertility (partial Spearman &rho; of AL at K=3 with the token ratio, controlling for competence: &minus;0.033 for Qwen, &minus;0.656 for Gemma), and the refund fraction is negative in every language where it is defined.</p><p><b>Why (exploratory).</b> High-fertility languages do have more easy continuation tokens (+0.026 / +0.055 step-1 acceptance), but the drafters are worse on tokens of every type outside English (&minus;0.195 / &minus;0.426), in all 20 languages.</p><p>Not claimed: the design's timing is recorded in a private repository and is not externally verifiable; greedy decoding and verify-pass counts only; two built-in drafters. See README.md.</p><p>Licence: CC BY-SA 4.0 (the data include FLORES-200 references); the code is additionally offered under MIT.</p>",
+ "description": "<p>Per-item speculative-decoding acceptance for two built-in self-drafters, Qwen3.5-9B with its MTP head and Gemma 4 E4B with its assistant, on 200 FLORES-200 devtest sentences in each of 21 languages, with the code that measures it exactly for greedy lossless speculation (K = 1..5).</p><p><b>Result: no fertility refund.</b> Under decision rules stated by the author before the runs (not independently verifiable; one gate amendment followed the first run), every gate passed and both kill rules fired in both families on their point estimates. Acceptance does not rise with fertility: the partial Spearman &rho; of AL at K=3 with the token ratio, controlling for competence, is &minus;0.656 for Gemma and &minus;0.033 for Qwen (language-bootstrap interval &minus;0.53 to 0.52). Every other language has lower acceptance length than English, so the refund fraction is negative wherever it is defined. Qwen's half of the verdict rests on point estimates.</p><p><b>Why (exploratory).</b> Other languages have more continuation tokens than English, which are easier to draft (+0.026 / +0.055 step-1 acceptance), but acceptance within each token tag is lower outside English (&minus;0.195 / &minus;0.426), in all 20 languages.</p><p>Not claimed: an externally verifiable preregistration; recorded provenance for run 2 (documented, not recorded in the run files); sampling, wall-clock latency or other drafters. See README.md.</p><p>FLORES-200 references: NLLB Team et al. (2022), arXiv:2207.04672, CC BY-SA 4.0. Licence: CC BY-SA 4.0; the code (code/, reproduce.sh) is additionally offered under the MIT License (LICENSE-CODE).</p>",
  "creators": [
   {
    "name": "Yang, Hanyu",
@@ -20,5 +20,12 @@
  ],
  "version": "1.0",
  "language": "eng",
- "notes": "The code (code/, reproduce.sh) is additionally offered under the MIT licence (LICENSE)."
+ "notes": "The code (code/, reproduce.sh) is MIT-licensed (LICENSE-CODE); everything else is CC BY-SA 4.0 (LICENSE).",
+ "related_identifiers": [
+  {
+   "identifier": "arXiv:2207.04672",
+   "relation": "references",
+   "scheme": "arxiv"
+  }
+ ]
 }

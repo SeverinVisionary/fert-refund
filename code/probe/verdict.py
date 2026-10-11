@@ -240,10 +240,10 @@ PREREG_VERDICT = {"n_items": 200, "min_langs": 16, "langs": "all"}
 PREREG_RUN = {"langs": "all", "n_items": 200, "g1_items": 20, "batch": 50, "max_new": 400, "dtype": "bfloat16",
               "no_abort": False, "no_cap_filter": False}
 PREREG_LIB = {"transformers": "5.19.0"}
-# run 2 (Colab, 2026-10-09) pre-dates recorded revisions and fingerprint.json; its two family directories, identified
-# by family_manifest over every run file (JSONL, gates, meta, DONE), are the only runs whose provenance rests on the
-# model revisions pinned in the notebook that produced them (it sha256-checks its embedded code and the FLORES
-# tarball) instead. Any other run must record revisions and a fingerprint.
+# Run 2 (2026-10-09) predates recorded model revisions and fingerprint.json. Its two family directories, identified
+# by family_manifest over every run file (JSONL, gates, meta, DONE), are exempted from those two checks and get a note
+# instead. The exemption identifies the files; it does not verify their provenance, which is documented alongside the
+# data rather than recorded in it. Any other run must record revisions and a fingerprint.
 ATTESTED_LEGACY_FAMILIES = {"qwen": "ec52681a3bb88296904e88a158fe172a15558455999bbe621112977eb5d9a923",
                             "gemma": "33675d5da8d2416059ba31ebe7c3eee802a95b2adddcde260586ab2f5a96c677"}
 
@@ -255,7 +255,8 @@ def family_manifest(fdir: Path) -> str:
         if p.is_file() and (p.suffix == ".jsonl" or p.name in ("DONE.json", "g1.json", "preflight.json", "meta.json")):
             h.update(f"{p.name}\0{hashlib.sha256(p.read_bytes()).hexdigest()}\0".encode())
     return h.hexdigest()
-# fert_probe.dir_manifest of the devtest dir extracted from the sha256-pinned FLORES-200 tarball (make_notebook.py)
+# fert_probe.dir_manifest of the devtest dir extracted from the FLORES-200 tarball with sha256
+# b8b0b76783024b85797e5cc75064eb83fc5288b41e9654dabc7be6ae944011f6
 PREREG_FLORES_MANIFEST = "98bf69f75e6ac396e4de8a5de93d975a1d3005f9bfe7b750a82e24fe96a79ea9"
 PREREG_REVISIONS = {"qwen": {"target": "c202236235762e1c871ad0ccb60c8ee5ba337b9a", "drafter": None},
                     "gemma": {"target": "ee0ef6023621cff504d758262d4e04895a5af4a2",
@@ -264,8 +265,8 @@ PREREG_REVISIONS = {"qwen": {"target": "c202236235762e1c871ad0ccb60c8ee5ba337b9a
 
 def deviations(args, root: Path, notes: list | None = None) -> list[str]:
     """Settings of this verdict call and of each family's recorded run (meta.json) that differ from the design.
-    A revision that is not recorded, missing or different is a deviation, except for the attested run 2 meta.json
-    files (ATTESTED_LEGACY_META), which get a note."""
+    A revision or fingerprint that is not recorded, missing or different is a deviation, except for the run 2
+    directories in ATTESTED_LEGACY_FAMILIES, which get a note."""
     dev = [f"verdict --{k.replace('_', '-')} {getattr(args, k)!r} != {v!r}"
            for k, v in PREREG_VERDICT.items() if getattr(args, k) != v]
     for f in fl.FAMILIES:
@@ -282,8 +283,8 @@ def deviations(args, root: Path, notes: list | None = None) -> list[str]:
         if meta.get("args", {}).get("device") != "cuda" or "A100" not in str(meta.get("gpu")):
             dev.append(f"{f}: ran on {meta.get('args', {}).get('device')!r} / {meta.get('gpu')!r}, not one A100")
         if legacy and notes is not None:
-            notes.append(f"{f}: run 2 pre-dates recorded revisions and fingerprint.json; its models, code and FLORES "
-                         "rest on the sha-checked notebook pins")
+            notes.append(f"{f}: run 2 predates recorded revisions and fingerprint.json; exempted by file identity, "
+                         "provenance not verified from the run files")
         if "revisions" in meta:
             dev += [f"{f}: {k} revision {meta['revisions'].get(k)!r} != {v!r}"
                     for k, v in PREREG_REVISIONS[f].items() if meta["revisions"].get(k) != v]

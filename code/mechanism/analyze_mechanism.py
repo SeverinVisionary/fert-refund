@@ -1,6 +1,6 @@
 """Exploratory mechanism analysis of FERT-REFUND run 2 (post hoc; not preregistered).
 
-python analyze_mechanism.py <unzipped run 2 dir with qwen/ gemma/> <out dir>
+python analyze_mechanism.py <run 2 data dir with qwen/ gemma/ and verdict.json> <out dir>
   -> mechanism.json, MECHANISM_TABLES.md
 
 Uses each valid item's step-1..5 acceptance matrix (record "acc") and token tags ("tags"):

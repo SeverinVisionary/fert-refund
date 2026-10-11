@@ -11,25 +11,49 @@ grep -v '  SHA256SUMS$' SHA256SUMS | (command -v sha256sum >/dev/null && sha256s
 
 WORK=$(mktemp -d "${TMPDIR:-.}/fert_check.XXXXXX")
 trap 'rm -rf "$WORK"' EXIT
-cp -R data/run2 "$WORK/run2"
+mkdir "$WORK/run2" && cp -R data/run2/qwen data/run2/gemma "$WORK/run2/"   # no shipped verdict.json in the copy
 
-echo "2/3 verdict"
+echo "2/3 verdict and gates"
 "$PY" code/probe/verdict.py "$WORK/run2" > "$WORK/verdict.log"
-"$PY" - "$WORK/run2/verdict.json" data/run2/verdict.json <<'PYEOF'
-import json, sys
+test -s "$WORK/run2/verdict.json" || { echo "verdict.py wrote no verdict.json"; exit 1; }
+"$PY" - "$WORK/run2/verdict.json" data/run2/verdict.json data/run2 <<'PYEOF'
+import json, math, sys
+sys.path.insert(0, "code/probe")
+import fert_lib as fl
 new, old = (json.load(open(p)) for p in sys.argv[1:3])
 assert new["verdict"] == old["verdict"] == "KILLED", (new["verdict"], old["verdict"])
-assert not new.get("deviations"), new.get("deviations")
-for f in ("qwen", "gemma"):
-    a, b = new["families"][f], old["families"][f]
-    for k in ("partial_spearman", "raw_spearman", "fires"):
-        assert a["F1"][k] == b["F1"][k], (f, "F1", k, a["F1"][k], b["F1"][k])
-    for k in ("median", "fires", "n_langs"):
-        assert a["F2p"][k] == b["F2p"][k], (f, "F2p", k, a["F2p"][k], b["F2p"][k])
-    for k in ("ci95",):
-        assert max(abs(x - y) for x, y in zip(a["F1"][k], b["F1"][k])) < 1e-12, (f, "F1 CI")
-    assert a["G1"]["pass"] and a["G2"]["pass"] and a["G3"]["pass"], f
-print("verdict KILLED; F1 and F2' statistics identical to the shipped verdict.json")
+assert new.get("deviations") == [], new.get("deviations")
+n = 0
+def sub(o, x, path):
+    """every field of the shipped verdict must be reproduced (the newer code may add fields)"""
+    global n
+    if isinstance(o, dict):
+        assert isinstance(x, dict), path
+        for k in o:
+            assert k in x, ("missing", path, k)
+            sub(o[k], x[k], f"{path}.{k}")
+    elif isinstance(o, list):
+        assert isinstance(x, list) and len(o) == len(x), path
+        for i, (a, b) in enumerate(zip(o, x)):
+            sub(a, b, f"{path}[{i}]")
+    elif isinstance(o, float) and not isinstance(o, bool):
+        n += 1
+        assert (math.isnan(o) and math.isnan(x)) or abs(o - x) <= 1e-9 * max(1.0, abs(o)), (path, o, x)
+    else:
+        n += 1
+        assert o == x, (path, o, x)
+sub(old["families"], new["families"], "$")
+for f in ("qwen", "gemma"):   # recompute G1 and preflight from their stored counts
+    g1 = json.load(open(f"{sys.argv[3]}/{f}/g1.json"))
+    pf = json.load(open(f"{sys.argv[3]}/{f}/preflight.json"))
+    spec = json.load(open(f"{sys.argv[3]}/{f}/meta.json"))["spec"]
+    rate = {w: a / t for w, (a, t) in g1["counts"].items()}
+    p = g1["primary_wiring"]
+    ok = (g1["n_used"] == g1["n_items"] == 20 and rate[p] >= 0.50
+          and all(rate[p] - rate[fl.compose_wiring(p, m)] >= 0.05 for m in spec["miswirings"]))
+    assert ok and g1["pass"], (f, "G1", rate)
+    assert pf["agree"] / pf["total"] >= 0.97 and pf["pass"], (f, "preflight", pf)
+print(f"verdict KILLED; all {n} shipped verdict fields reproduced; G1 and preflight recomputed from counts")
 PYEOF
 
 echo "3/3 mechanism decomposition"

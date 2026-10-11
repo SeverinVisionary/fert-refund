@@ -1,6 +1,6 @@
 # Design of the probe
 
-The design, gates and kill rules below were written down, and frozen as constants in `fert_probe.py` and `verdict.py`, before the GPU runs. That record sits in a private repository, so its timing cannot be checked independently. Read the decision rules as stated in advance by the author, not as externally preregistered. Five amendments were made; they are listed at the end, and one of them (A5) came after data.
+The design, gates and kill rules below were written down before the GPU runs, and frozen as constants in the versions of `fert_probe.py` and `verdict.py` used for those runs. The shipped versions are later; README.md lists what changed. No public timestamp of the design predates the runs, so read the decision rules as stated in advance by the author, not as externally preregistered. Five amendments were made; they are listed at the end, and one of them (A5) came after data.
 
 ## Question
 
@@ -89,7 +89,7 @@ Point estimates decide.
 - **A3 (before data).** Gemma's mis-wirings are scored under the selected position convention. This makes G1 stricter.
 - **A4 (before data).** In the value ceiling, which is reported only, English AL uses L's matched items.
 - **A5 (after data).** Run 1 stopped at Qwen's G1.
-  - The original hidden-state ablation fed the pre-final-norm hidden state. It beat the correct wiring by only 0.012 (0.945 against 0.933), because the MTP re-normalizes its input.
+  - The original hidden-state ablation fed the pre-final-norm hidden state. The correct wiring beat it by only 0.012 (0.945 against 0.933), short of the 0.05 margin, because the MTP re-normalizes its input.
   - It was replaced by the off-by-one hidden state, and run 2 was made with that.
   - Only English G1 rates had been seen, and the amendment makes G1 easier to pass.
   - Run 1's gate files are in `data/run1_g1fail/`.

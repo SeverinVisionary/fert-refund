@@ -10,9 +10,12 @@ authors:
 abstract: >-
   Per-item speculative-decoding acceptance for two built-in self-drafters (Qwen3.5-9B MTP, Gemma 4 E4B
   assistant) on 200 FLORES-200 sentences in each of 21 languages, with the code that measures it. Under
-  decision rules fixed before the runs, the hypothesis that higher tokenizer fertility is partly refunded
-  by higher acceptance is rejected in both families: acceptance falls with fertility, so the refund
-  fraction is negative in every language where it is defined.
+  decision rules stated by the author before the runs (not independently verifiable; one gate amendment
+  followed the first run), every gate passed and both kill rules fired in both families on their point
+  estimates: acceptance does not rise with tokenizer fertility (it falls in Gemma and is flat in Qwen),
+  and because every other language has lower acceptance length than English, the refund fraction is
+  negative wherever it is defined. Qwen's half of the verdict rests on point estimates whose
+  language-bootstrap intervals cross the thresholds.
 keywords:
   - speculative decoding
   - multi-token prediction
@@ -20,4 +23,6 @@ keywords:
   - multilingual inference
   - FLORES-200
   - negative result
-license: CC-BY-SA-4.0
+license:
+  - CC-BY-SA-4.0
+  - MIT
