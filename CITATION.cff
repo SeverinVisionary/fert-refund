@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+title: "No fertility refund: speculative-decoding acceptance across 21 languages (data and code)"
+message: "If you use this data or code, please cite it as below."
+type: dataset
+version: "1.0"
+authors:
+  - given-names: Hanyu
+    family-names: Yang
+    orcid: "https://orcid.org/0009-0005-0419-4070"
+abstract: >-
+  Per-item speculative-decoding acceptance for two built-in self-drafters (Qwen3.5-9B MTP, Gemma 4 E4B
+  assistant) on 200 FLORES-200 sentences in each of 21 languages, with the code that measures it. Under
+  decision rules fixed before the runs, the hypothesis that higher tokenizer fertility is partly refunded
+  by higher acceptance is rejected in both families: acceptance falls with fertility, so the refund
+  fraction is negative in every language where it is defined.
+keywords:
+  - speculative decoding
+  - multi-token prediction
+  - tokenizer fertility
+  - multilingual inference
+  - FLORES-200
+  - negative result
+license: CC-BY-SA-4.0

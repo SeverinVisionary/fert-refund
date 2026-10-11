@@ -1,0 +1,70 @@
+{
+ "family": "qwen",
+ "spec": {
+  "target": "Qwen/Qwen3.5-9B",
+  "target_rev": "c202236235762e1c871ad0ccb60c8ee5ba337b9a",
+  "stop_tokens": [
+   "<|im_end|>",
+   "<|endoftext|>"
+  ],
+  "wirings": [
+   "ok",
+   "swap",
+   "prenorm",
+   "shift"
+  ],
+  "miswirings": [
+   "swap",
+   "shift"
+  ]
+ },
+ "args": {
+  "family": "qwen",
+  "target": "/content/fert/models/qwen",
+  "drafter": null,
+  "flores": "/content/fert/flores/flores200_dataset/devtest",
+  "out": "/content/fert/out",
+  "langs": "all",
+  "n_items": 200,
+  "g1_items": 20,
+  "batch": 50,
+  "max_new": 400,
+  "device": "cuda",
+  "dtype": "bfloat16",
+  "no_abort": false,
+  "no_cap_filter": false
+ },
+ "langs": [
+  "eng_Latn",
+  "amh_Ethi",
+  "mya_Mymr",
+  "khm_Khmr",
+  "guj_Gujr",
+  "kat_Geor",
+  "tel_Telu",
+  "ben_Beng",
+  "hin_Deva",
+  "tam_Taml",
+  "tha_Thai",
+  "fin_Latn",
+  "tur_Latn",
+  "swh_Latn",
+  "rus_Cyrl",
+  "arb_Arab",
+  "jpn_Jpan",
+  "zho_Hans",
+  "kor_Hang",
+  "fra_Latn",
+  "deu_Latn"
+ ],
+ "stops": [
+  248046,
+  248044
+ ],
+ "pad_id": 248044,
+ "torch": "2.11.0+cu130",
+ "transformers": "5.19.0",
+ "python": "3.13.15",
+ "gpu": "NVIDIA A100-SXM4-80GB",
+ "started": "2026-10-09T20:40:12+0000"
+}

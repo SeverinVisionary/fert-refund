@@ -1,0 +1,76 @@
+{
+ "family": "gemma",
+ "spec": {
+  "target": "google/gemma-4-E4B-it",
+  "target_rev": "ee0ef6023621cff504d758262d4e04895a5af4a2",
+  "drafter": "google/gemma-4-E4B-it-assistant",
+  "drafter_rev": "8d0031ea8c2109e2b1e86bb9368a4539b537f80a",
+  "stop_tokens": [
+   "<eos>",
+   "<turn|>",
+   "<|tool_response>"
+  ],
+  "wirings": [
+   "ok",
+   "pos_t",
+   "swap",
+   "unscaled",
+   "pos_t+swap",
+   "pos_t+unscaled"
+  ],
+  "miswirings": [
+   "swap",
+   "unscaled"
+  ]
+ },
+ "args": {
+  "family": "gemma",
+  "target": "/content/fert/models/gemma",
+  "drafter": "/content/fert/models/asst",
+  "flores": "/content/fert/flores/flores200_dataset/devtest",
+  "out": "/content/fert/out",
+  "langs": "all",
+  "n_items": 200,
+  "g1_items": 20,
+  "batch": 50,
+  "max_new": 400,
+  "device": "cuda",
+  "dtype": "bfloat16",
+  "no_abort": false,
+  "no_cap_filter": false
+ },
+ "langs": [
+  "eng_Latn",
+  "amh_Ethi",
+  "mya_Mymr",
+  "khm_Khmr",
+  "guj_Gujr",
+  "kat_Geor",
+  "tel_Telu",
+  "ben_Beng",
+  "hin_Deva",
+  "tam_Taml",
+  "tha_Thai",
+  "fin_Latn",
+  "tur_Latn",
+  "swh_Latn",
+  "rus_Cyrl",
+  "arb_Arab",
+  "jpn_Jpan",
+  "zho_Hans",
+  "kor_Hang",
+  "fra_Latn",
+  "deu_Latn"
+ ],
+ "stops": [
+  1,
+  106,
+  50
+ ],
+ "pad_id": 0,
+ "torch": "2.11.0+cu130",
+ "transformers": "5.19.0",
+ "python": "3.13.15",
+ "gpu": "NVIDIA A100-SXM4-80GB",
+ "started": "2026-10-09T21:10:13+0000"
+}

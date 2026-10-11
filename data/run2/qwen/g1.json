@@ -1,0 +1,32 @@
+{
+ "family": "qwen",
+ "n_items": 20,
+ "n_used": 20,
+ "counts": {
+  "ok": [
+   705,
+   746
+  ],
+  "swap": [
+   0,
+   746
+  ],
+  "prenorm": [
+   696,
+   746
+  ],
+  "shift": [
+   463,
+   746
+  ]
+ },
+ "rate": {
+  "ok": 0.9450402144772118,
+  "swap": 0.0,
+  "prenorm": 0.9329758713136729,
+  "shift": 0.6206434316353887
+ },
+ "primary_wiring": "ok",
+ "pass": true,
+ "reasons": []
+}

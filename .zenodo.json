@@ -1,0 +1,24 @@
+{
+ "title": "No fertility refund: speculative-decoding acceptance across 21 languages (data and code)",
+ "upload_type": "dataset",
+ "description": "<p>Per-item speculative-decoding acceptance for two built-in self-drafters, Qwen3.5-9B with its MTP head and Gemma 4 E4B with its assistant, on 200 FLORES-200 devtest sentences in each of 21 languages, with the code that measures it exactly for greedy lossless speculation (K = 1..5).</p><p><b>Result: no fertility refund.</b> Under decision rules fixed before the runs, every gate passed and both kill rules fired in both families. Acceptance falls with fertility (partial Spearman &rho; of AL at K=3 with the token ratio, controlling for competence: &minus;0.033 for Qwen, &minus;0.656 for Gemma), and the refund fraction is negative in every language where it is defined.</p><p><b>Why (exploratory).</b> High-fertility languages do have more easy continuation tokens (+0.026 / +0.055 step-1 acceptance), but the drafters are worse on tokens of every type outside English (&minus;0.195 / &minus;0.426), in all 20 languages.</p><p>Not claimed: the design's timing is recorded in a private repository and is not externally verifiable; greedy decoding and verify-pass counts only; two built-in drafters. See README.md.</p><p>Licence: CC BY-SA 4.0 (the data include FLORES-200 references); the code is additionally offered under MIT.</p>",
+ "creators": [
+  {
+   "name": "Yang, Hanyu",
+   "orcid": "0009-0005-0419-4070"
+  }
+ ],
+ "access_right": "open",
+ "license": "cc-by-sa-4.0",
+ "keywords": [
+  "speculative decoding",
+  "multi-token prediction",
+  "tokenizer fertility",
+  "multilingual inference",
+  "FLORES-200",
+  "negative result"
+ ],
+ "version": "1.0",
+ "language": "eng",
+ "notes": "The code (code/, reproduce.sh) is additionally offered under the MIT licence (LICENSE)."
+}
