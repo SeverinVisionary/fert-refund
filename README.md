@@ -31,7 +31,7 @@ The design, gates and kill rules are in `DESIGN.md`. They were stated before the
   - It reflects the contrast with English rather than a fertility gradient: its Spearman correlation with T_L/T_en is 0.01 for Qwen and 0.36 for Gemma.
 - **The within-tag part is much larger and negative:** −0.195 (Qwen) and −0.426 (Gemma), with the CI below zero in all 20 languages.
   - Acceptance of `word_start`, `cont` and `other` tokens is lower than English in every non-English language, in both families.
-  - `special` tokens are near-certain everywhere.
+  - `special` tokens are accepted at a rate of 0.99 or more in most languages, though not all; the lowest is Gemma's Thai at 0.85.
   - English has no `frag` tokens, so `frag` uses the language's own rate. Its whole effect is therefore counted in the mix part.
 - **The drafters' disadvantage persists at deeper drafts.** Acceptance of draft 2, given that draft 1 was accepted, is lower outside English: 0.46–0.74 against 0.85 for Qwen, and 0.43–0.66 against 0.83 for Gemma. The cumulative gap therefore grows with depth. The per-depth gap does not grow for Gemma.
 - **One exception.** Qwen's Amharic tokens are 35% byte fragments, and under the `frag` convention above its mix part is negative (−0.040).
@@ -77,7 +77,7 @@ The design, gates and kill rules are in `DESIGN.md`. They were stated before the
 - **Requirements:** Python ≥ 3.10 with numpy, scipy, sacrebleu, torch and transformers. `fert_lib.py` imports torch at module level; no GPU or model weights are needed.
 - **What it checks:**
   - the checksums;
-  - a fresh `verdict.py` run, written to an empty directory, against the shipped verdict: every field of the shipped `verdict.json`, recursively;
+  - a fresh `verdict.py` run, written to an empty directory, against the shipped verdict: the verdict, its reason and every per-family field, recursively;
   - the G1 and preflight gates, recomputed from their stored counts;
   - the decomposition against `results/mechanism/mechanism.json`.
 - **Runtime:** a few minutes.

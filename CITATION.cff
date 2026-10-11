@@ -15,7 +15,9 @@ abstract: >-
   estimates: acceptance does not rise with tokenizer fertility (it falls in Gemma and is flat in Qwen),
   and because every other language has lower acceptance length than English, the refund fraction is
   negative wherever it is defined. Qwen's half of the verdict rests on point estimates whose
-  language-bootstrap intervals cross the thresholds.
+  language-bootstrap intervals cross the thresholds. Run 2 predates recorded model revisions and code
+  fingerprints; its files are exempted from those checks by identity, and the shipped runner and verdict
+  code are later versions.
 keywords:
   - speculative decoding
   - multi-token prediction

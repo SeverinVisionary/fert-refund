@@ -22,6 +22,7 @@ sys.path.insert(0, "code/probe")
 import fert_lib as fl
 new, old = (json.load(open(p)) for p in sys.argv[1:3])
 assert new["verdict"] == old["verdict"] == "KILLED", (new["verdict"], old["verdict"])
+assert new["reason"] == old["reason"], (new["reason"], old["reason"])
 assert new.get("deviations") == [], new.get("deviations")
 n = 0
 def sub(o, x, path):
