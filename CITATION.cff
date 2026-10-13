@@ -23,8 +23,8 @@ abstract: >-
   T = 0, 0.7 and 1.0, and two EAGLE-3 heads for Qwen3-8B) finds the same surcharge for both built-in
   drafters: every non-English language gets a smaller speedup than English, and acceptance does not rise
   with fertility under sampling. A multilingual EAGLE-3 head shows no trend over all 21 languages and is
-  weak in English; without languages where its target produces mostly degenerate outputs, its trend is
-  positive (post hoc).
+  weak in English; excluding languages with more than 10% degenerate sampled outputs makes its trend weakly
+  positive, with a sign that depends on the exclusion threshold (post hoc).
 keywords:
   - speculative decoding
   - multi-token prediction

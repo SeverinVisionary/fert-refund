@@ -8,7 +8,8 @@ python analyze_serve_extra.py <serving out dir> <unzipped run 2 dir>  -> <out>/s
 - Reported only: the fraction of qwen/gemma English calibration outputs equal to run 2's HF greedy output.
 - Sensitivity (not preregistered): sampling AL comes from per-language counters, so it cannot exclude invalid
   items. Per arm and T, report the invalid count per language, and A2's rho again without any language whose
-  sampling items are more than 10% invalid.
+  sampling items are more than 10% invalid; and the same rho over exclusion thresholds of 5, 10, 20, 30 and 50%,
+  because the 10% result is the largest of them for eagle_patel.
 """
 from __future__ import annotations
 
@@ -45,7 +46,13 @@ def extra(out: Path, run2: Path) -> dict:
                             "rho_kept": an.spearman([al_t[L] for L in keep], [sm["T_ratio"][L] for L in keep]),
                             "n_kept": len(keep)}
     return {"A1_rho_speedup_vs_T_ratio": rho, "A3_patel_minus_rh_AL_T0": diff, "calib_same_as_run2_hf": same,
-            "sensitivity_A2_drop_langs_over_10pct_invalid": sens}
+            "sensitivity_A2_drop_langs_over_10pct_invalid": sens,
+            "sensitivity_A2_threshold_sweep": {
+                arm: {str(thr): {t: (lambda keep: {"rho": an.spearman([al_t[L] for L in keep],
+                                                                      [sm["T_ratio"][L] for L in keep]), "n": len(keep)})(
+                    [L for L in al_t if L in sm["T_ratio"] and sens[arm][t]["invalid_frac"].get(L, 0) <= thr])
+                    for t, al_t in sm["AL"].items()} for thr in (0.05, 0.10, 0.20, 0.30, 0.50)}
+                for arm, sm in s["sampling"].items()}}
 
 
 if __name__ == "__main__":
