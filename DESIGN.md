@@ -132,7 +132,10 @@ Item validity is the probe's rule: under the 400-token cap, and a 4-gram repeat 
   - speedup S_L(K) = Σ latency(none) / Σ latency(K);
   - premium P_L(K) = mean latency_L(K) / mean latency_en(K).
   - Stated expectation: S_L(3) < S_en(3) for every non-English language in `qwen` and `gemma`, and P_L(3) > P_L(none).
+  - Also reported: ms per output token, and the Spearman ρ of S_L(3) with T_L/T_en over the six languages (descriptive; n = 6). This line was omitted from v1.0's restatement.
 - **A2, sampling.** Per arm and T, the Spearman ρ of AL_L with T_L/T_en over the 21 languages. T_L is the arm's own output tokens at T = 0, over items valid in both L and English. Stated expectation: ρ ≤ 0.10 at every T for `qwen` and `gemma`.
 - **A3, trained EAGLE-3 heads.** The same ρ at T = 0 for `eagle_rh` and `eagle_patel`, and the per-language AL difference between the two heads. No direction was stated.
-- **Reported only.** Greedy losslessness: the fraction of latency items whose speculative output equals the no-speculation output.
+- **Reported only.**
+  - Greedy losslessness: the fraction of latency items whose speculative output equals the no-speculation output.
+  - The fraction of `qwen` and `gemma` English calibration items whose vLLM greedy output equals the probe's Hugging Face greedy output. This line was omitted from v1.0's restatement.
 - **CIs.** Item-bootstrap 95% intervals (2000 resamples, seed 0) for S_L(K) and the latency-stage AL. Sampling AL is a per-language aggregate of vLLM's counters and has no item-level interval.

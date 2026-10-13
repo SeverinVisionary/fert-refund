@@ -2,9 +2,9 @@ cff-version: 1.2.0
 title: "No fertility refund: speculative-decoding acceptance across 21 languages (data and code)"
 message: "If you use this data or code, please cite it as below."
 type: dataset
-version: "1.0"
-doi: 10.5281/zenodo.23331653
-url: "https://doi.org/10.5281/zenodo.23331653"
+version: "1.1"
+doi: 10.5281/zenodo.23344127
+url: "https://doi.org/10.5281/zenodo.23344127"
 authors:
   - given-names: Hanyu
     family-names: Yang
@@ -22,7 +22,9 @@ abstract: >-
   code are later versions. A descriptive follow-up in vLLM 0.31.0 (wall-clock latency at batch 1, sampling at
   T = 0, 0.7 and 1.0, and two EAGLE-3 heads for Qwen3-8B) finds the same surcharge for both built-in
   drafters: every non-English language gets a smaller speedup than English, and acceptance does not rise
-  with fertility under sampling. A multilingual EAGLE-3 head is flat in fertility but weak in English.
+  with fertility under sampling. A multilingual EAGLE-3 head shows no trend over all 21 languages and is
+  weak in English; without languages where its target produces mostly degenerate outputs, its trend is
+  positive (post hoc).
 keywords:
   - speculative decoding
   - multi-token prediction

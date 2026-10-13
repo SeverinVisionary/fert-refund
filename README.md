@@ -8,7 +8,7 @@ This deposit tests that hope for two built-in self-drafters, on 200 FLORES-200 s
 
 A follow-up measures the same question in a real serving engine (vLLM): wall-clock latency, sampling, and two trained EAGLE-3 heads. See "Serving in vLLM" below.
 
-**Cite as:** Yang, H. (2026). *No fertility refund: speculative-decoding acceptance across 21 languages (data and code)*, version 1.0. Zenodo. https://doi.org/10.5281/zenodo.23331653 (see `CITATION.cff`).
+**Cite as:** Yang, H. (2026). *No fertility refund: speculative-decoding acceptance across 21 languages (data and code)*, version 1.1. Zenodo. https://doi.org/10.5281/zenodo.23344127 (see `CITATION.cff`). All versions: https://doi.org/10.5281/zenodo.23331652.
 
 The design, gates and kill rules are in `DESIGN.md`. They were stated before the runs, but that cannot be verified independently; see "Not claimed" below.
 
@@ -66,7 +66,13 @@ The probe counts verify passes under greedy decoding. The follow-up measures the
 
   - For both built-in drafters, no refund appears under sampling: ρ is negative at every temperature, and English has the highest AL of the 21 languages at each one.
   - The general EAGLE-3 head behaves like the built-in drafters.
-  - The multilingual head is flat in fertility, but weak in English: its English AL is 1.70, against 2.42 for the general head. Gujarati (2.26) and Hindi (1.87) exceed its English AL at T = 0. At T = 0 it beats the general head in only 4 of 21 languages, mainly Gujarati (+1.20) and Hindi (+0.65).
+  - The multilingual head shows no trend over all 21 languages (ρ ≈ 0), and it is weak in English: its English AL is 1.70, against 2.42 for the general head. Gujarati (2.26) and Hindi (1.87) exceed its English AL at T = 0. At T = 0 it beats the general head in only 4 of 21 languages, mainly Gujarati (+1.20) and Hindi (+0.65).
+  - **That ρ ≈ 0 depends on degenerate outputs** (corrected in v1.1; v1.0 called this head flat in fertility). Its target, Qwen3-8B, produces capped or looping output for many sampled items in a few languages, for example 83 of 100 Amharic items at T = 0. Sampling AL comes from per-language counters and cannot exclude those items. Without every language whose sampled items are more than 10% invalid, the multilingual head's ρ is positive: +0.42 at T = 0 (16 languages), +0.25 at T = 0.7 and +0.15 at T = 1.0. The general head stays negative (−0.67 to −0.72), and Qwen and Gemma are unaffected (35 and 3 invalid items of 6,300). This check is post hoc.
+
+**Post-hoc additions (v1.1)** are in `results/serve/serve_extra.json`, from `code/serve/analyze_serve_extra.py`. They cover three outputs the serving design specified (`DESIGN.md`, serving extension) but the analysis code that ran did not emit, plus the sensitivity check above:
+- Spearman ρ of the K = 3 speedup with T_L/T_en over the six latency languages: Qwen −0.54, Gemma −0.71, `eagle_rh` −0.49, `eagle_patel` +0.49 (n = 6).
+- vLLM's greedy calibration outputs equal the probe's Hugging Face greedy outputs on 20 of 20 English items, for both Qwen and Gemma. `serve_extra.json` stores the fraction (1.0); the 20 items are `data/serve/<arm>_K3_calib.jsonl` against `data/run2/<arm>/eng_Latn.jsonl`.
+- The per-language AL difference between the two EAGLE-3 heads at T = 0.
 
 ## Files
 
@@ -97,7 +103,7 @@ The probe counts verify passes under greedy decoding. The follow-up measures the
 **Code:**
 - `code/probe/`: `fert_probe.py`, the runner; `fert_lib.py`, the emulation, tagging and statistics; `verdict.py`, the gates and kill rules.
 - `code/mechanism/analyze_mechanism.py`, with outputs in `results/mechanism/`: the exploratory decomposition.
-- `code/serve/`: `fert_serve.py`, the vLLM runner, and `analyze_serve.py`, the serving analyses, with outputs in `results/serve/`. Both are byte-identical to the versions that produced `data/serve/`.
+- `code/serve/`: `fert_serve.py`, the vLLM runner, and `analyze_serve.py`, the serving analyses, with outputs in `results/serve/`. Both are byte-identical to the versions that produced `data/serve/`. `analyze_serve_extra.py` (v1.1) was written after the data, for the post-hoc additions.
 - `reproduce.sh`: recomputes the verdict and the decomposition from the data and checks them against the shipped files.
 
 **Code versions.**
@@ -118,7 +124,8 @@ The probe counts verify passes under greedy decoding. The follow-up measures the
   - the G1 and preflight gates, recomputed from their stored counts;
   - the decomposition against `results/mechanism/mechanism.json`;
   - a fresh `analyze_serve.py` run on a copy of `data/serve/`, which must reproduce `results/serve/` byte for byte;
-  - each serving calibration gate, recomputed from its raw records.
+  - each serving calibration gate, recomputed from its raw records;
+  - a fresh `analyze_serve_extra.py` run, which must reproduce `results/serve/serve_extra.json` byte for byte.
 - **Runtime:** a few minutes.
 
 Regenerating the data needs one A100 and the model revisions in `DESIGN.md`; `fert_probe.py --help` and `fert_serve.py --help` list the arguments. The serving runner also needs vLLM 0.31.0.
@@ -137,6 +144,7 @@ Regenerating the data needs one A100 and the model revisions in `DESIGN.md`; `fe
   - A first serving run on the previous day finished, but its outputs were lost before they were saved. The shipped data are from the second run, of the same runner and analysis code.
   - The lost run's printed summary was close but not identical (it is not shipped, so this cannot be checked): its Qwen ρ at T = 0.7 was −0.35, against −0.38 here. Sampling under batching is not bit-reproducible across runs.
 - **Speculative greedy output is often not identical to plain greedy output in vLLM.** The losslessness column of `SERVE_REPORT.md` gives the fraction of identical outputs. It is 0.97 for English in the built-in drafters, and mostly lower elsewhere: down to 0.50 for Qwen's Amharic at K = 1, and 1 of 3 on the EAGLE Amharic items. The speedups are latency ratios over the same valid inputs, not speedups at identical output, and output quality was not compared.
+- **Sampling AL includes invalid items.** It is aggregated from vLLM's per-language counters, so the validity rule cannot be applied to it. This matters only for the Qwen3-8B EAGLE arms (419 and 420 of 6,300 items invalid, per arm); see the sensitivity check above.
 - **Some cells are thin.** Only 3 of the 30 Amharic latency items are valid in both Qwen3-8B's baseline and its EAGLE runs, so the EAGLE Amharic latency figures rest on 3 items.
 - **The mechanism split is exploratory.** It was chosen after seeing the verdict, and it depends on the five token tags, on English as the reference, and on the `frag` convention above.
 - **No result about tokenizers in general.** The fertility axis is the one these two tokenizers happen to produce: T_L/T_en is 0.90–4.72 for Qwen and 1.03–2.28 for Gemma.
@@ -146,3 +154,8 @@ Regenerating the data needs one A100 and the model revisions in `DESIGN.md`; `fe
 - **FLORES-200.** The `ref` fields are FLORES-200 devtest sentences, unmodified. They come from NLLB Team et al., "No Language Left Behind: Scaling Human-Centered Machine Translation" (arXiv:2207.04672, 2022), and are licensed CC BY-SA 4.0.
 - **Model outputs.** These were generated with Qwen3.5-9B and Gemma 4 E4B, both released under Apache-2.0, and are released here as part of the dataset under CC BY-SA 4.0.
 - **Licence files.** `LICENSE` has the full CC BY-SA 4.0 text, which covers everything except the code. `LICENSE-CODE` is the MIT License, for `code/` and `reproduce.sh`.
+
+## Versions
+
+- **1.1:** corrects the description of the multilingual EAGLE-3 head, which v1.0 called flat in fertility. Adds the post-hoc analyses above, with their code and a reproduction step. `DESIGN.md` now includes two reported-only items of the serving design that v1.0's restatement omitted. Data, and the code that produced them, are unchanged.
+- **1.0:** first release, doi:10.5281/zenodo.23331653.

@@ -1,0 +1,244 @@
+{
+ "A1_rho_speedup_vs_T_ratio": {
+  "qwen": {
+   "n": 6,
+   "rho": -0.5428571428571429
+  },
+  "gemma": {
+   "n": 6,
+   "rho": -0.7142857142857143
+  },
+  "eagle_rh": {
+   "n": 6,
+   "rho": -0.48571428571428577
+  },
+  "eagle_patel": {
+   "n": 6,
+   "rho": 0.48571428571428577
+  }
+ },
+ "A3_patel_minus_rh_AL_T0": {
+  "eng_Latn": -0.7105551025954613,
+  "amh_Ethi": -0.3001797782575817,
+  "mya_Mymr": -0.072703319701652,
+  "khm_Khmr": -0.12218692762915251,
+  "guj_Gujr": 1.19564016105172,
+  "kat_Geor": -0.1187102685363477,
+  "tel_Telu": 0.06082699969103045,
+  "ben_Beng": 0.04633515420422385,
+  "hin_Deva": 0.651856465046293,
+  "tam_Taml": -0.010349750722041806,
+  "tha_Thai": -0.037096338805571394,
+  "fin_Latn": -0.10398321048329495,
+  "tur_Latn": -0.11148076927553419,
+  "swh_Latn": -1.0567180874628084,
+  "rus_Cyrl": -0.08066631290785975,
+  "arb_Arab": -0.07017890712748143,
+  "jpn_Jpan": -0.1017129896385236,
+  "zho_Hans": -0.20624321711694216,
+  "kor_Hang": -0.14210820082976738,
+  "fra_Latn": -0.42592190703218114,
+  "deu_Latn": -0.19739376571934342
+ },
+ "calib_same_as_run2_hf": {
+  "qwen": 1.0,
+  "gemma": 1.0
+ },
+ "sensitivity_A2_drop_langs_over_10pct_invalid": {
+  "qwen": {
+   "0.0": {
+    "dropped": [],
+    "invalid_frac": {
+     "amh_Ethi": 0.08,
+     "mya_Mymr": 0.02,
+     "khm_Khmr": 0.01,
+     "guj_Gujr": 0.01,
+     "kat_Geor": 0.01,
+     "tam_Taml": 0.01,
+     "swh_Latn": 0.02
+    },
+    "rho_kept": -0.21428571428571425,
+    "n_kept": 21
+   },
+   "0.7": {
+    "dropped": [],
+    "invalid_frac": {
+     "amh_Ethi": 0.04,
+     "mya_Mymr": 0.01,
+     "khm_Khmr": 0.01
+    },
+    "rho_kept": -0.38311688311688313,
+    "n_kept": 21
+   },
+   "1.0": {
+    "dropped": [],
+    "invalid_frac": {
+     "amh_Ethi": 0.05,
+     "mya_Mymr": 0.01,
+     "khm_Khmr": 0.01,
+     "kat_Geor": 0.02,
+     "tel_Telu": 0.01,
+     "ben_Beng": 0.01,
+     "tam_Taml": 0.01,
+     "fin_Latn": 0.01
+    },
+    "rho_kept": -0.4766233766233766,
+    "n_kept": 21
+   }
+  },
+  "gemma": {
+   "0.0": {
+    "dropped": [],
+    "invalid_frac": {
+     "amh_Ethi": 0.01,
+     "khm_Khmr": 0.01
+    },
+    "rho_kept": -0.6792207792207793,
+    "n_kept": 21
+   },
+   "0.7": {
+    "dropped": [],
+    "invalid_frac": {
+     "khm_Khmr": 0.01
+    },
+    "rho_kept": -0.6688311688311688,
+    "n_kept": 21
+   },
+   "1.0": {
+    "dropped": [],
+    "invalid_frac": {},
+    "rho_kept": -0.6727272727272726,
+    "n_kept": 21
+   }
+  },
+  "eagle_rh": {
+   "0.0": {
+    "dropped": [
+     "amh_Ethi",
+     "kat_Geor",
+     "mya_Mymr",
+     "swh_Latn",
+     "tel_Telu"
+    ],
+    "invalid_frac": {
+     "amh_Ethi": 0.82,
+     "mya_Mymr": 0.51,
+     "khm_Khmr": 0.08,
+     "guj_Gujr": 0.07,
+     "kat_Geor": 0.11,
+     "tel_Telu": 0.11,
+     "ben_Beng": 0.01,
+     "tam_Taml": 0.09,
+     "swh_Latn": 0.24,
+     "arb_Arab": 0.01
+    },
+    "rho_kept": -0.6705882352941177,
+    "n_kept": 16
+   },
+   "0.7": {
+    "dropped": [
+     "amh_Ethi",
+     "mya_Mymr",
+     "swh_Latn"
+    ],
+    "invalid_frac": {
+     "amh_Ethi": 0.57,
+     "mya_Mymr": 0.3,
+     "khm_Khmr": 0.05,
+     "guj_Gujr": 0.07,
+     "kat_Geor": 0.06,
+     "tel_Telu": 0.05,
+     "ben_Beng": 0.01,
+     "tam_Taml": 0.04,
+     "swh_Latn": 0.17
+    },
+    "rho_kept": -0.7151702786377709,
+    "n_kept": 18
+   },
+   "1.0": {
+    "dropped": [
+     "amh_Ethi",
+     "mya_Mymr"
+    ],
+    "invalid_frac": {
+     "amh_Ethi": 0.19,
+     "mya_Mymr": 0.35,
+     "khm_Khmr": 0.04,
+     "guj_Gujr": 0.05,
+     "kat_Geor": 0.02,
+     "tel_Telu": 0.09,
+     "ben_Beng": 0.01,
+     "swh_Latn": 0.07
+    },
+    "rho_kept": -0.7035087719298245,
+    "n_kept": 19
+   }
+  },
+  "eagle_patel": {
+   "0.0": {
+    "dropped": [
+     "amh_Ethi",
+     "kat_Geor",
+     "khm_Khmr",
+     "mya_Mymr",
+     "swh_Latn"
+    ],
+    "invalid_frac": {
+     "amh_Ethi": 0.83,
+     "mya_Mymr": 0.45,
+     "khm_Khmr": 0.11,
+     "guj_Gujr": 0.07,
+     "kat_Geor": 0.14,
+     "tel_Telu": 0.09,
+     "ben_Beng": 0.02,
+     "tam_Taml": 0.09,
+     "swh_Latn": 0.25,
+     "arb_Arab": 0.01
+    },
+    "rho_kept": 0.4176470588235294,
+    "n_kept": 16
+   },
+   "0.7": {
+    "dropped": [
+     "amh_Ethi",
+     "kat_Geor",
+     "mya_Mymr",
+     "swh_Latn"
+    ],
+    "invalid_frac": {
+     "amh_Ethi": 0.53,
+     "mya_Mymr": 0.33,
+     "khm_Khmr": 0.03,
+     "guj_Gujr": 0.04,
+     "kat_Geor": 0.11,
+     "tel_Telu": 0.1,
+     "ben_Beng": 0.01,
+     "tam_Taml": 0.04,
+     "fin_Latn": 0.01,
+     "swh_Latn": 0.17
+    },
+    "rho_kept": 0.25000000000000006,
+    "n_kept": 17
+   },
+   "1.0": {
+    "dropped": [
+     "amh_Ethi",
+     "mya_Mymr"
+    ],
+    "invalid_frac": {
+     "amh_Ethi": 0.22,
+     "mya_Mymr": 0.27,
+     "khm_Khmr": 0.02,
+     "guj_Gujr": 0.06,
+     "kat_Geor": 0.04,
+     "tel_Telu": 0.09,
+     "tam_Taml": 0.04,
+     "fin_Latn": 0.01,
+     "swh_Latn": 0.02
+    },
+    "rho_kept": 0.14912280701754385,
+    "n_kept": 19
+   }
+  }
+ }
+}

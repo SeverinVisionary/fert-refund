@@ -97,5 +97,7 @@ for arm, ref in (("qwen", 3.2576), ("gemma", 3.0124), ("eagle_rh", None), ("eagl
     assert abs(al - got["al"]) < 1e-9 and ok and got["pass"], (arm, al, got)
 print("serving calibration gates recomputed from raw records")
 PYEOF
+"$PY" code/serve/analyze_serve_extra.py "$WORK/serve" data/run2 > "$WORK/extra.log"
+cmp "$WORK/serve/serve_extra.json" results/serve/serve_extra.json || { echo "serving: serve_extra.json differs"; exit 1; }
 echo "serving analyses identical to results/serve/"
 echo "ALL CHECKS PASSED"
