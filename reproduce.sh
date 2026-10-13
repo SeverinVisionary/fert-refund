@@ -1,19 +1,20 @@
 #!/usr/bin/env bash
-# Recompute the verdict and the mechanism decomposition from data/ and check them against the shipped files.
+# Recompute the verdict, the mechanism decomposition and the serving analyses from data/ and check them
+# against the shipped files.
 # Every step fails loudly; exit status 0 means everything matched.
 set -euo pipefail
 cd "$(dirname "$0")"
 PY=${PYTHON:-python3}
 "$PY" -c "import numpy, scipy, sacrebleu, torch, transformers" || { echo "missing dependency (see README.md)"; exit 1; }
 
-echo "1/3 checksums"
+echo "1/4 checksums"
 grep -v '  SHA256SUMS$' SHA256SUMS | (command -v sha256sum >/dev/null && sha256sum -c --quiet - || shasum -a 256 -c --quiet -)
 
 WORK=$(mktemp -d "${TMPDIR:-.}/fert_check.XXXXXX")
 trap 'rm -rf "$WORK"' EXIT
 mkdir "$WORK/run2" && cp -R data/run2/qwen data/run2/gemma "$WORK/run2/"   # no shipped verdict.json in the copy
 
-echo "2/3 verdict and gates"
+echo "2/4 verdict and gates"
 "$PY" code/probe/verdict.py "$WORK/run2" > "$WORK/verdict.log"
 test -s "$WORK/run2/verdict.json" || { echo "verdict.py wrote no verdict.json"; exit 1; }
 "$PY" - "$WORK/run2/verdict.json" data/run2/verdict.json data/run2 <<'PYEOF'
@@ -57,7 +58,7 @@ for f in ("qwen", "gemma"):   # recompute G1 and preflight from their stored cou
 print(f"verdict KILLED; all {n} shipped verdict fields reproduced; G1 and preflight recomputed from counts")
 PYEOF
 
-echo "3/3 mechanism decomposition"
+echo "3/4 mechanism decomposition"
 "$PY" code/mechanism/analyze_mechanism.py "$WORK/run2" "$WORK/mech" > "$WORK/mech.log"
 "$PY" - "$WORK/mech/mechanism.json" results/mechanism/mechanism.json <<'PYEOF'
 import json, math, sys
@@ -77,4 +78,24 @@ def same(a, b, path="$"):
 same(*(json.load(open(p)) for p in sys.argv[1:3]))
 print("decomposition identical to results/mechanism/mechanism.json")
 PYEOF
+
+echo "4/4 serving analyses"
+cp -R data/serve "$WORK/serve"   # data only: the shipped outputs live in results/serve/
+test ! -e "$WORK/serve/serve_summary.json" || { echo "serving outputs found among the data"; exit 1; }
+"$PY" code/serve/analyze_serve.py "$WORK/serve" > "$WORK/serve.log"
+for f in serve_summary.json SERVE_REPORT.md; do
+  cmp "$WORK/serve/$f" "results/serve/$f" || { echo "serving: $f differs"; exit 1; }
+done
+"$PY" - data/serve <<'PYEOF'
+import json, sys
+for arm, ref in (("qwen", 3.2576), ("gemma", 3.0124), ("eagle_rh", None), ("eagle_patel", None)):
+    recs = [json.loads(x) for x in open(f"{sys.argv[1]}/{arm}_K3_calib.jsonl") if x.strip()]
+    got = json.load(open(f"{sys.argv[1]}/{arm}_K3_calib.json"))
+    assert sorted(r["i"] for r in recs) == list(range(20)) and {r["lang"] for r in recs} == {"eng_Latn"}, arm
+    al = 1 + sum(r["accepted"] for r in recs) / sum(r["drafts"] for r in recs)
+    ok = abs(al - ref) / ref <= 0.10 if ref else al >= 1.3
+    assert abs(al - got["al"]) < 1e-9 and ok and got["pass"], (arm, al, got)
+print("serving calibration gates recomputed from raw records")
+PYEOF
+echo "serving analyses identical to results/serve/"
 echo "ALL CHECKS PASSED"

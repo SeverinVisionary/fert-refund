@@ -1,0 +1,18 @@
+{
+ "stop": null,
+ "status": {
+  "qwen_K3": "ok",
+  "qwen_K0": "ok",
+  "qwen_K1": "ok",
+  "qwen_K5": "ok",
+  "gemma_K3": "ok",
+  "gemma_K0": "ok",
+  "gemma_K1": "ok",
+  "gemma_K5": "ok",
+  "eagle_rh_K3": "ok",
+  "eagle_patel_K3": "ok",
+  "qwen3_8b_K0": "ok"
+ },
+ "gpu": "NVIDIA A100-SXM4-40GB, 40960 MiB",
+ "hours": 1.5474364268779754
+}

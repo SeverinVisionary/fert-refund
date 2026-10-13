@@ -3,6 +3,8 @@ title: "No fertility refund: speculative-decoding acceptance across 21 languages
 message: "If you use this data or code, please cite it as below."
 type: dataset
 version: "1.0"
+doi: 10.5281/zenodo.23331653
+url: "https://doi.org/10.5281/zenodo.23331653"
 authors:
   - given-names: Hanyu
     family-names: Yang
@@ -17,7 +19,10 @@ abstract: >-
   negative wherever it is defined. Qwen's half of the verdict rests on point estimates whose
   language-bootstrap intervals cross the thresholds. Run 2 predates recorded model revisions and code
   fingerprints; its files are exempted from those checks by identity, and the shipped runner and verdict
-  code are later versions.
+  code are later versions. A descriptive follow-up in vLLM 0.31.0 (wall-clock latency at batch 1, sampling at
+  T = 0, 0.7 and 1.0, and two EAGLE-3 heads for Qwen3-8B) finds the same surcharge for both built-in
+  drafters: every non-English language gets a smaller speedup than English, and acceptance does not rise
+  with fertility under sampling. A multilingual EAGLE-3 head is flat in fertility but weak in English.
 keywords:
   - speculative decoding
   - multi-token prediction
@@ -25,6 +30,7 @@ keywords:
   - multilingual inference
   - FLORES-200
   - negative result
+  - vLLM
 license:
   - CC-BY-SA-4.0
   - MIT

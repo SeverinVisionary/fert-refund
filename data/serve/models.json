@@ -1,0 +1,36 @@
+{
+ "paths": {
+  "qwen35": "/content/fert_serve/models/qwen35",
+  "gemma4": "/content/fert_serve/models/gemma4",
+  "gemma4a": "/content/fert_serve/models/gemma4a",
+  "qwen3_8b": "/content/fert_serve/models/qwen3_8b",
+  "eagle_rh": "/content/fert_serve/models/eagle_rh",
+  "eagle_patel": "/content/fert_serve/models/eagle_patel"
+ },
+ "repos": {
+  "qwen35": [
+   "Qwen/Qwen3.5-9B",
+   "c202236235762e1c871ad0ccb60c8ee5ba337b9a"
+  ],
+  "gemma4": [
+   "google/gemma-4-E4B-it",
+   "ee0ef6023621cff504d758262d4e04895a5af4a2"
+  ],
+  "gemma4a": [
+   "google/gemma-4-E4B-it-assistant",
+   "8d0031ea8c2109e2b1e86bb9368a4539b537f80a"
+  ],
+  "qwen3_8b": [
+   "Qwen/Qwen3-8B",
+   "b968826d9c46dd6066d109eabc6255188de91218"
+  ],
+  "eagle_rh": [
+   "RedHatAI/Qwen3-8B-speculator.eagle3",
+   "08610ffa01dd9f16731fe8f627b85905b6aa51c4"
+  ],
+  "eagle_patel": [
+   "SwitchXDDD/multilingual-eagle3-qwen3-8b",
+   "72072c4207ab5ee0aa0d65660107a7d52e46c80a"
+  ]
+ }
+}

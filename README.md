@@ -6,6 +6,10 @@ This deposit tests that hope for two built-in self-drafters, on 200 FLORES-200 s
 - Qwen3.5-9B with its MTP head;
 - Gemma 4 E4B with its assistant model.
 
+A follow-up measures the same question in a real serving engine (vLLM): wall-clock latency, sampling, and two trained EAGLE-3 heads. See "Serving in vLLM" below.
+
+**Cite as:** Yang, H. (2026). *No fertility refund: speculative-decoding acceptance across 21 languages (data and code)*, version 1.0. Zenodo. https://doi.org/10.5281/zenodo.23331653 (see `CITATION.cff`).
+
 The design, gates and kill rules are in `DESIGN.md`. They were stated before the runs, but that cannot be verified independently; see "Not claimed" below.
 
 ## Result
@@ -36,6 +40,34 @@ The design, gates and kill rules are in `DESIGN.md`. They were stated before the
 - **The drafters' disadvantage persists at deeper drafts.** Acceptance of draft 2, given that draft 1 was accepted, is lower outside English: 0.46–0.74 against 0.85 for Qwen, and 0.43–0.66 against 0.83 for Gemma. The cumulative gap therefore grows with depth. The per-depth gap does not grow for Gemma.
 - **One exception.** Qwen's Amharic tokens are 35% byte fragments, and under the `frag` convention above its mix part is negative (−0.040).
 
+## Serving in vLLM (descriptive follow-up)
+
+The probe counts verify passes under greedy decoding. The follow-up measures the same drafters in vLLM 0.31.0 on one A100 40GB, adding two EAGLE-3 heads for Qwen3-8B: a general-purpose head (`eagle_rh`) and a multilingual one (`eagle_patel`). It has no kill rules. Its design and stated expectations are in `DESIGN.md` (serving extension), and its full tables are in `results/serve/SERVE_REPORT.md`.
+
+- **Calibration.** vLLM's English AL at K = 3 is within 4% of the probe's emulated AL: 3.38 against 3.26 for Qwen, and 3.12 against 3.01 for Gemma. The EAGLE heads reach 2.46 (`eagle_rh`) and 1.54 (`eagle_patel`).
+- **Latency at batch 1, K = 3.** The expectation held for both built-in drafters, Qwen and Gemma. For each of them, every non-English language gets a smaller speedup than English, with its interval below English's, and its latency premium over English grows under speculation. This does not hold for the multilingual EAGLE-3 head (below).
+
+| speedup S_L(3) | eng | zho | rus | fin | hin | amh |
+|---|---|---|---|---|---|---|
+| Qwen3.5-9B MTP | 1.94 | 1.60 | 1.73 | 1.52 | 1.65 | 1.41 |
+| Gemma 4 E4B assistant | 2.38 | 1.54 | 1.86 | 1.23 | 1.78 | 1.30 |
+| Qwen3-8B + `eagle_rh` | 1.97 | 1.03 | 0.99 | 1.01 | 1.08 | 0.92 |
+| Qwen3-8B + `eagle_patel` | 1.31 | 0.92 | 0.95 | 0.93 | 1.64 | 1.25 |
+
+  For example, Gemma's Finnish takes 1.55× English's latency without speculation and 3.02× with it. The general EAGLE-3 head gives almost no speedup outside English (0.92–1.08). With the multilingual head, Hindi is the one language faster than English: 1.64 against 1.31.
+- **Sampling, all 21 languages, K = 3.** The Spearman ρ of AL with T_L/T_en:
+
+| ρ(AL, T_L/T_en) | T = 0 | T = 0.7 | T = 1.0 |
+|---|---|---|---|
+| Qwen3.5-9B MTP | −0.21 | −0.38 | −0.48 |
+| Gemma 4 E4B assistant | −0.68 | −0.67 | −0.67 |
+| Qwen3-8B + `eagle_rh` | −0.61 | −0.65 | −0.72 |
+| Qwen3-8B + `eagle_patel` | 0.02 | −0.02 | −0.02 |
+
+  - For both built-in drafters, no refund appears under sampling: ρ is negative at every temperature, and English has the highest AL of the 21 languages at each one.
+  - The general EAGLE-3 head behaves like the built-in drafters.
+  - The multilingual head is flat in fertility, but weak in English: its English AL is 1.70, against 2.42 for the general head. Gujarati (2.26) and Hindi (1.87) exceed its English AL at T = 0. At T = 0 it beats the general head in only 4 of 21 languages, mainly Gujarati (+1.20) and Hindi (+0.65).
+
 ## Files
 
 **Licences, by path:**
@@ -43,7 +75,7 @@ The design, gates and kill rules are in `DESIGN.md`. They were stated before the
 | path | contents | licence |
 |---|---|---|
 | `data/` | run records | CC BY-SA 4.0 |
-| `results/` | the mechanism outputs | CC BY-SA 4.0 |
+| `results/` | the mechanism and serving outputs | CC BY-SA 4.0 |
 | `*.md`, `CITATION.cff`, `.zenodo.json` | documentation | CC BY-SA 4.0 |
 | `code/`, `reproduce.sh` | code | MIT (`LICENSE-CODE`) |
 
@@ -57,10 +89,15 @@ The design, gates and kill rules are in `DESIGN.md`. They were stated before the
 - `data/run2/{qwen,gemma}/{g1,preflight,meta,DONE}.json`: gate results and run metadata.
 - `data/run2/verdict.json` and `data/run2/REPORT.md`: the verdict as computed during the run.
 - `data/run1_g1fail/qwen/`: the earlier run that stopped at the wiring gate (see `DESIGN.md`, A5).
+- `data/serve/`: the vLLM records, per arm and configuration, and the engine versions (`logs/vllm_version.txt`; `logs/env.txt` gives torch, transformers and whether CUDA was available).
+  - `<arm>_K<k>_latency.jsonl`: one record per request, with latency, output tokens, drafts and accepted tokens.
+  - `<arm>_K3_sampling.jsonl` and `<arm>_K3_calib.jsonl`: the sampling and calibration records.
+  - `<arm>_K3_calib.json`: the gate results. `STATUS.json`, `RUN_INFO.json` (card and hours) and `models.json` (revisions) describe the run.
 
 **Code:**
 - `code/probe/`: `fert_probe.py`, the runner; `fert_lib.py`, the emulation, tagging and statistics; `verdict.py`, the gates and kill rules.
 - `code/mechanism/analyze_mechanism.py`, with outputs in `results/mechanism/`: the exploratory decomposition.
+- `code/serve/`: `fert_serve.py`, the vLLM runner, and `analyze_serve.py`, the serving analyses, with outputs in `results/serve/`. Both are byte-identical to the versions that produced `data/serve/`.
 - `reproduce.sh`: recomputes the verdict and the decomposition from the data and checks them against the shipped files.
 
 **Code versions.**
@@ -79,10 +116,12 @@ The design, gates and kill rules are in `DESIGN.md`. They were stated before the
   - the checksums;
   - a fresh `verdict.py` run, written to an empty directory, against the shipped verdict: the verdict, its reason and every per-family field, recursively;
   - the G1 and preflight gates, recomputed from their stored counts;
-  - the decomposition against `results/mechanism/mechanism.json`.
+  - the decomposition against `results/mechanism/mechanism.json`;
+  - a fresh `analyze_serve.py` run on a copy of `data/serve/`, which must reproduce `results/serve/` byte for byte;
+  - each serving calibration gate, recomputed from its raw records.
 - **Runtime:** a few minutes.
 
-Regenerating the data needs one A100 and the model revisions in `DESIGN.md`. `fert_probe.py --help` lists the arguments.
+Regenerating the data needs one A100 and the model revisions in `DESIGN.md`; `fert_probe.py --help` and `fert_serve.py --help` list the arguments. The serving runner also needs vLLM 0.31.0.
 
 ## Not claimed
 
@@ -91,10 +130,14 @@ Regenerating the data needs one A100 and the model revisions in `DESIGN.md`. `fe
 - **The verdict rests on Qwen's point estimates.** KILLED needs one rule to fire in both families. Gemma's F1 and F2′ fire with their language-bootstrap intervals clear of the thresholds. Qwen's do not: the F1 interval is [−0.53, 0.52] and the F2′ interval is [0.152, 0.224]. Point estimates were the stated rule, but this is where the result is weakest.
 - **Run 2's provenance is documented, not recorded in its files.** Run 2 predates two things the current code records: model revisions and a code/data fingerprint. `verdict.py` exempts exactly these two directories, identified by a hash of their files, and reports a note instead of a deviation. That hash proves the files are the shipped ones; it does not prove which code or model revisions produced them. `spec.target_rev` in `meta.json` is the pinned constant, not a recorded download.
 - **Scope.**
-  - Greedy decoding only.
-  - Verify-pass counts, not wall-clock latency.
-  - One translation prompt, and 200 sentences per language.
-  - Two drafters, both built into their targets.
+  - The verdict uses greedy decoding and verify-pass counts. The serving follow-up adds sampling and wall-clock latency, but has no decision rules.
+  - One translation prompt, and 200 sentences per language (100 for sampling, and 30 for latency in six languages).
+  - Two built-in drafters, plus two EAGLE-3 heads for one third target. One engine version, one GPU type, and batch size 1 for latency.
+- **The serving numbers are one run.**
+  - A first serving run on the previous day finished, but its outputs were lost before they were saved. The shipped data are from the second run, of the same runner and analysis code.
+  - The lost run's printed summary was close but not identical (it is not shipped, so this cannot be checked): its Qwen ρ at T = 0.7 was −0.35, against −0.38 here. Sampling under batching is not bit-reproducible across runs.
+- **Speculative greedy output is often not identical to plain greedy output in vLLM.** The losslessness column of `SERVE_REPORT.md` gives the fraction of identical outputs. It is 0.97 for English in the built-in drafters, and mostly lower elsewhere: down to 0.50 for Qwen's Amharic at K = 1, and 1 of 3 on the EAGLE Amharic items. The speedups are latency ratios over the same valid inputs, not speedups at identical output, and output quality was not compared.
+- **Some cells are thin.** Only 3 of the 30 Amharic latency items are valid in both Qwen3-8B's baseline and its EAGLE runs, so the EAGLE Amharic latency figures rest on 3 items.
 - **The mechanism split is exploratory.** It was chosen after seeing the verdict, and it depends on the five token tags, on English as the reference, and on the `frag` convention above.
 - **No result about tokenizers in general.** The fertility axis is the one these two tokenizers happen to produce: T_L/T_en is 0.90–4.72 for Qwen and 1.03–2.28 for Gemma.
 

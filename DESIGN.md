@@ -93,3 +93,46 @@ Point estimates decide.
   - It was replaced by the off-by-one hidden state, and run 2 was made with that.
   - Only English G1 rates had been seen, and the amendment makes G1 easier to pass.
   - Run 1's gate files are in `data/run1_g1fail/`.
+
+# Serving extension (vLLM)
+
+This is a descriptive follow-up to the probe. It was written down before its runs, in the serving preregistration that the docstrings of `fert_serve.py` and `analyze_serve.py` cite as PREREG_SERVE.md. That file is not shipped; its design is restated here in full. As with the probe, no public timestamp predates the runs. It has no kill rules and does not reopen the verdict above. It answers three gaps in the probe: forward passes are not milliseconds, the decoding was greedy only, and both drafters were built into their targets.
+
+## Engine and drafters
+
+- **Engine.** vLLM 0.31.0, bf16, on one A100 40GB (`data/serve/RUN_INFO.json` records the card).
+  - Settings: `generation_config="vllm"`, `watermarking=False`, `enable_prefix_caching=False`, `max_model_len=2048`, `gpu_memory_utilization=0.85`, engine `seed=0`, at most 400 new tokens.
+  - Prompts, items and stop tokens are the probe's.
+
+| Arm | Target @ revision | Drafter @ revision | `speculative_config` |
+|---|---|---|---|
+| `qwen` | `Qwen/Qwen3.5-9B` @ `c2022362` | built-in MTP head | `method: mtp` |
+| `gemma` | `google/gemma-4-E4B-it` @ `ee0ef602` | `google/gemma-4-E4B-it-assistant` @ `8d0031ea` | `method: mtp` |
+| `eagle_rh` | `Qwen/Qwen3-8B` @ `b968826d` | `RedHatAI/Qwen3-8B-speculator.eagle3` @ `08610ffa` (general-purpose) | `method: eagle3` |
+| `eagle_patel` | `Qwen/Qwen3-8B` @ `b968826d` | `SwitchXDDD/multilingual-eagle3-qwen3-8b` @ `72072c42` (multilingual) | `method: eagle3` |
+
+Full revisions are in `data/serve/models.json`. AL is `1 + accepted / drafts`, from vLLM's speculative-decoding counters; it is the same quantity as the probe's emulated AL.
+
+## Stages
+
+1. **Calibration gate**, per drafter, before its other runs: greedy, K = 3, English items 0–19.
+   - `qwen` and `gemma` must come within 10% (relative) of the probe's emulated AL on the same items (3.2576 and 3.0124).
+   - `eagle_*` have no probe reference and must reach AL ≥ 1.3.
+   - A failed gate skips that drafter's other runs. The run plan enforces this: each drafter's first configuration runs the gate, and its exit code decides the rest. `fert_serve.py --stages` can omit the gate when called by hand.
+2. **Latency**, batch size 1, after 3 warm-up requests.
+   - Six languages: eng_Latn, zho_Hans, rus_Cyrl, fin_Latn, hin_Deva and amh_Ethi; items 0–29 each.
+   - `qwen` and `gemma` at K ∈ {none, 1, 3, 5}. `eagle_*` at K = 3, against one shared Qwen3-8B no-speculation baseline.
+3. **Sampling**, batched within a language, at K = 3: all 21 languages, items 0–99, T ∈ {0, 0.7, 1.0} (top-p 1, no top-k), seed 1000 + item.
+
+Item validity is the probe's rule: under the 400-token cap, and a 4-gram repeat fraction ≤ 0.3.
+
+## Analyses
+
+- **A1, latency.** Over valid items matched across configurations:
+  - speedup S_L(K) = Σ latency(none) / Σ latency(K);
+  - premium P_L(K) = mean latency_L(K) / mean latency_en(K).
+  - Stated expectation: S_L(3) < S_en(3) for every non-English language in `qwen` and `gemma`, and P_L(3) > P_L(none).
+- **A2, sampling.** Per arm and T, the Spearman ρ of AL_L with T_L/T_en over the 21 languages. T_L is the arm's own output tokens at T = 0, over items valid in both L and English. Stated expectation: ρ ≤ 0.10 at every T for `qwen` and `gemma`.
+- **A3, trained EAGLE-3 heads.** The same ρ at T = 0 for `eagle_rh` and `eagle_patel`, and the per-language AL difference between the two heads. No direction was stated.
+- **Reported only.** Greedy losslessness: the fraction of latency items whose speculative output equals the no-speculation output.
+- **CIs.** Item-bootstrap 95% intervals (2000 resamples, seed 0) for S_L(K) and the latency-stage AL. Sampling AL is a per-language aggregate of vLLM's counters and has no item-level interval.
