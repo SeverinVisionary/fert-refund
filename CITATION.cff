@@ -2,9 +2,9 @@ cff-version: 1.2.0
 title: "No fertility refund: speculative-decoding acceptance across 21 languages (data and code)"
 message: "If you use this data or code, please cite it as below."
 type: dataset
-version: "1.1"
-doi: 10.5281/zenodo.23344127
-url: "https://doi.org/10.5281/zenodo.23344127"
+version: "1.2"
+doi: 10.5281/zenodo.23348249
+url: "https://doi.org/10.5281/zenodo.23348249"
 authors:
   - given-names: Hanyu
     family-names: Yang

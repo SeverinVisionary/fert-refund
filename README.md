@@ -8,7 +8,7 @@ This deposit tests that hope for two built-in self-drafters, on 200 FLORES-200 s
 
 A follow-up measures the same question in a real serving engine (vLLM): wall-clock latency, sampling, and two trained EAGLE-3 heads. See "Serving in vLLM" below.
 
-**Cite as:** Yang, H. (2026). *No fertility refund: speculative-decoding acceptance across 21 languages (data and code)*, version 1.1. Zenodo. https://doi.org/10.5281/zenodo.23344127 (see `CITATION.cff`). All versions: https://doi.org/10.5281/zenodo.23331652.
+**Cite as:** Yang, H. (2026). *No fertility refund: speculative-decoding acceptance across 21 languages (data and code)*, version 1.2. Zenodo. https://doi.org/10.5281/zenodo.23348249 (see `CITATION.cff`). All versions: https://doi.org/10.5281/zenodo.23331652.
 
 The design, gates and kill rules are in `DESIGN.md`. They were stated before the runs, but that cannot be verified independently; see "Not claimed" below.
 
@@ -157,6 +157,6 @@ Regenerating the data needs one A100 and the model revisions in `DESIGN.md`; `fe
 
 ## Versions
 
-- **Unreleased (GitHub only):** adds the exclusion-threshold sweep, and states that the multilingual head's positive ρ depends on the threshold.
-- **1.1:** corrects the description of the multilingual EAGLE-3 head, which v1.0 called flat in fertility. Adds the post-hoc analyses above, with their code and a reproduction step. `DESIGN.md` now includes two reported-only items of the serving design that v1.0's restatement omitted. Data, and the code that produced them, are unchanged.
+- **1.2:** adds the exclusion-threshold sweep, and states that the multilingual head's positive ρ depends on the threshold. v1.1 reported only the 10% threshold, which gives the largest value.
+- **1.1** (doi:10.5281/zenodo.23344127): corrects the description of the multilingual EAGLE-3 head, which v1.0 called flat in fertility. Adds the post-hoc analyses above, with their code and a reproduction step. `DESIGN.md` now includes two reported-only items of the serving design that v1.0's restatement omitted. Data, and the code that produced them, are unchanged.
 - **1.0:** first release, doi:10.5281/zenodo.23331653.
