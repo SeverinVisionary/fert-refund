@@ -8,9 +8,9 @@ This deposit tests that hope for two built-in self-drafters, on 200 FLORES-200 s
 
 A follow-up measures the same question in a real serving engine (vLLM): wall-clock latency, sampling, and two trained EAGLE-3 heads. See "Serving in vLLM" below.
 
-The paper that reports these results is `paper/fert-refund-paper.pdf` (v1.3). It carries its own AI-use statement.
+The paper that reports these results is `paper/fert-refund-paper.pdf` (v1.4). It carries its own AI-use statement.
 
-**Cite as:** Yang, H. (2026). *No fertility refund: speculative-decoding acceptance across 21 languages (data and code)*, version 1.3. Zenodo. https://doi.org/10.5281/zenodo.23354898 (see `CITATION.cff`). All versions: https://doi.org/10.5281/zenodo.23331652.
+**Cite as:** Yang, H. (2026). *No fertility refund: speculative-decoding acceptance across 21 languages (data and code)*, version 1.4. Zenodo. https://doi.org/10.5281/zenodo.23355847 (see `CITATION.cff`). All versions: https://doi.org/10.5281/zenodo.23331652.
 
 The design, gates and kill rules are in `DESIGN.md`. They were stated before the runs, but that cannot be verified independently; see "Not claimed" below.
 
@@ -106,7 +106,7 @@ The probe counts verify passes under greedy decoding. The follow-up measures the
 - `code/probe/`: `fert_probe.py`, the runner; `fert_lib.py`, the emulation, tagging and statistics; `verdict.py`, the gates and kill rules.
 - `code/mechanism/analyze_mechanism.py`, with outputs in `results/mechanism/`: the exploratory decomposition.
 - `code/serve/`: `fert_serve.py`, the vLLM runner, and `analyze_serve.py`, the serving analyses, with outputs in `results/serve/`. Both are byte-identical to the versions that produced `data/serve/`. `analyze_serve_extra.py` (v1.1) was written after the data, for the post-hoc additions.
-- `paper/fert-refund-paper.pdf`: the paper (v1.3).
+- `paper/fert-refund-paper.pdf`: the paper (v1.4).
 - `reproduce.sh`: recomputes the verdict and the decomposition from the data and checks them against the shipped files.
 
 **Code versions.**
@@ -160,7 +160,8 @@ Regenerating the data needs one A100 and the model revisions in `DESIGN.md`; `fe
 
 ## Versions
 
-- 1.3: adds the paper, `paper/fert-refund-paper.pdf`. Data, code and results are unchanged from 1.2.
+- 1.4: a corrected paper. It now defines the token ratio as measured on the models' own translations, gives the refund fraction, F2′ language set and validity rules, states that Qwen's result rests on point estimates, cites FLORES-200 and related work it missed, and fixes the figures (Figure 2 hid one negative bar). Data, code and results are unchanged.
+- 1.3 (doi:10.5281/zenodo.23354898): adds the paper, `paper/fert-refund-paper.pdf`. Data, code and results are unchanged from 1.2.
 - 1.2 (doi:10.5281/zenodo.23348249): adds the exclusion-threshold sweep, and states that the multilingual head's positive ρ depends on the threshold. v1.1 reported only the 10% threshold, which gives the largest value.
 - 1.1 (doi:10.5281/zenodo.23344127): corrects the description of the multilingual EAGLE-3 head, which v1.0 called flat in fertility. Adds the post-hoc analyses above, with their code and a reproduction step. `DESIGN.md` now includes two reported-only items of the serving design that v1.0's restatement omitted. Data, and the code that produced them, are unchanged.
 - 1.0: first release, doi:10.5281/zenodo.23331653.
